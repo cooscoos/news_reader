@@ -1,0 +1,13 @@
+[package]
+name = "news_reader"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = "0.9.18"
+tokio = { version = "1.18.2", features = ["full"] }
+regex = "1.5.6"   # for searching the html for the most read stories
+html5ever = "*"
+markup5ever_rcdom = "*"
