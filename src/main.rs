@@ -17,33 +17,15 @@ async fn main() {
     println!("{:?}",result);
 
     // Use regex to search for a 1 or 2 digit number
-    let re = Regex::new(r#"data-entityid="most-popular-read-\d{1,2}"#).unwrap();
-
-    println!("{:?}",re.is_match(&result));
-    
+    let re = Regex::new(r#"most-popular-read-(?P<number>\d{1,2}).*?href="/news/(?P<link>.*?)">.*?gel-pica-bold">(?P<summary>.*?)</span>"#).unwrap();
 
     for cap in re.captures_iter(&result) {
-        println!("{:?}",cap);
+        println!("Number: {:?}, href: {:?}, summary: {:?}", &cap["number"],&cap["link"],&cap["summary"]);
     }
 
-
-
-
-    // this works, but you need to sit down and understand regex better.
-    // the bit we're looking for is "data-entityid="most-popular-read-"
-    // then look for promo: <span class="gs-c-promo-heading__title gel-pica-bold">
-    
-    //Our string
-    
-    // then </span></a></div></span></li>
-
-    // apparently we can use Serde for this
-
     
     
 
-
-    
     
 
     
