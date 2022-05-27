@@ -9,5 +9,3 @@ edition = "2021"
 reqwest = "0.9.18"
 tokio = { version = "1.18.2", features = ["full"] }
 regex = "1.5.6"   # for searching the html for the most read stories
-html5ever = "*"
-markup5ever_rcdom = "*"
