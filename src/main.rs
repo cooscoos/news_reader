@@ -1,7 +1,11 @@
+
+
 //use tokio;
 //use reqwest;
-use news_reader::Article;
+use news_reader::*;
 use regex::Regex;
+use std::io;
+
 
 #[tokio::main]
 async fn main() {
@@ -26,12 +30,30 @@ async fn main() {
         ));
     }
 
-    println!("\n \n === WELCOME TO BBC NEWS === \n \n Here are the most read articles. \n");
-    stories.iter().for_each(|a| a.display_them());
+    loop {
+        println!("\n \n === WELCOME TO BBC NEWS === \n \n Here are the most read articles. \n");
+        stories.iter().for_each(|a| a.display_them());
 
-    println!("\n Input a number (1-10) to read the article, or type anything else to quit: \n");
+        println!("\n Input a number (1-10) to read the article, or type anything else to quit: \n");
 
-    // how to parse html formatting
+
+
+        let input_no = get_user_input();
+
+
+        println!("{}",stories[input_no-1].read());
+
+        // I just want a keypress here, probably a better way
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).expect("Keyboard bad");
+    }
+
+    //let re = Regex::new(r#"l-BoldText e5tfeyi3">(.*?)<.*?Paragraph eq5iqo00">(.*?)</p>.*?Paragraph eq5iqo00">(.*?)</p>.*?Paragraph eq5iqo00">(.*?)</p>.*?Paragraph eq5iqo00">(.*?)</p>.*?Paragraph eq5iqo00">(.*?)</p>"#).unwrap();
+
+
+
+    // show 5 lines at a time with enter to read more -- learn keypress first.
+    
     // grey out if been_read
 
 }
