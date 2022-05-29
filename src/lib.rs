@@ -1,127 +1,82 @@
-use std::io;
 use regex::Regex;
+use std::io;
 
-#[derive(Debug)]
-pub struct Article {
-    number: u8,
-    href: String,
-    summary: String,
-    full_article: String,
-    been_read: bool,
+mod article;
+use article::Article;
+
+// Get most read stories from main BBC news page
+pub fn get_top_stories() -> Vec<Article> {
+    let result = match reqwest::get("http://www.bbc.co.uk/news") {
+        Ok(mut val) => val.text().unwrap(),
+        Err(error) => {
+            panic!("BBC News is unreachable. Are you connected to t'internet? Error: {error}.")
+        }
+    };
+
+    let mut top_stories: Vec<Article> = Vec::new();
+
+    // Use regex to extract the most read article rating (number), the link, and the summary
+    // This site is good for building and testing regex: https://regexr.com/
+    let re = Regex::new(r#"most-popular-read-(?P<number>\d{1,2}).*?href="(?P<link>.*?)">.*?gel-pica-bold">(?P<summary>.*?)</span>"#).unwrap();
+
+    for cap in re.captures_iter(&result) {
+        top_stories.push(Article::default(
+            &cap["number"],
+            &cap["link"],
+            &cap["summary"],
+        ));
+    }
+
+    top_stories
 }
 
-impl Article {
-    pub fn default(number: &str, href: &str, summary: &str) -> Self {
-        let num: u8 = number.trim().parse().unwrap();
+pub fn news_loop(top_stories: &mut Vec<Article>) {
+    println!(
+        r#"
+    ____  ____   ____   _   _ _______        ______  
+   | __ )| __ ) / ___| | \ | | ____\ \      / / ___|  
+   |  _ \|  _ \| |     |  \| |  _|  \ \ /\ / /\___ \  
+   | |_) | |_) | |___  | |\  | |___  \ V  V /  ___) | 
+   |____/|____/ \____| |_| \_|_____|  \_/\_/  |____/ "#
+    );
 
-        Self {
-            number: num,
-            href: href.to_string(),
-            summary: decode_html(summary),
-            full_article: "".to_string(), // empty for now, we're only going to grab it if the user wants to read it
-            been_read: false,
-        }
+    println!("\n \n === WELCOME TO BBC NEWS === \n \n Here are the most read articles. \n");
+    top_stories.iter().for_each(|a| a.display_them());
+
+    println!("\n Input a number (1-10) to read the article, or type anything else to quit: \n");
+
+    let input_no = get_user_input();
+
+    let selected_story = top_stories[input_no - 1].read();
+    let story_chunks: Vec<&str> = selected_story.split("[SEPARATE]").collect();
+
+    for chunk in story_chunks {
+        println!("{}[Press any key to continue]", chunk);
+        get_any_user_input()
     }
-
-    pub fn display_them(&self) {
-        let read = match self.been_read{
-            true => "(READ) ",
-            false => "", 
-        };
-
-        println!("{:<2}  {:<80}{}", self.number, self.summary, read);
-    }
-
-    pub fn read(&mut self) -> String {
-        
-        if !self.been_read {
-            let story_url = format!("https://www.bbc.co.uk{}",self.href);
-
-            let full_article = match reqwest::get(&story_url) {
-                Ok(mut val) => val.text().unwrap(),
-                Err(error) => {
-                    panic!("BBC News is unreachable. Are you connected to t'internet? Error: {error}.")
-                }
-            };
-    
-            
-            self.full_article = self.parse_article(full_article);
-            self.been_read = true;
-    
-
-            
-        }
-
-        self.full_article.clone()
-
-        
-    }
-
-    fn parse_article(&self, full_article: String) -> String{
-
-        // we probably want to collect about 5 lines each time and output a vector string to have the read thingy
-        let mut full_story = format!("\n-----\n{}\n-----\n\n",self.summary.to_ascii_uppercase());
-
-        if self.href.contains("/sport/") {
-            // TODO: I could code up some stuff to parse BBC Sport articles but I can't be bothered doing this.
-            full_story.push_str("Sorry, BBC Sport articles are not supported by this app.\n\n")
-        }
-        let re = Regex::new(r#"<div data-component="text-block" class="ssrcss-uf6wea-RichTextComponentWrapper e1xue1i86"><div class="ssrcss-7uxr49-RichTextContainer e5tfeyi1"><p class="ssrcss-1q0x1qg-Paragraph eq5iqo00">(?P<line>.*?)</p>"#).unwrap();
-
-        for cap in re.captures_iter(&full_article) {
-            
-            let re2 = Regex::new(r#"l-BoldText e5tfeyi3">(?P<boldline>.*?)</b>"#).unwrap();
-            let m = re2.captures(&cap["line"]);
-
-            // TODO: this will die if there is any more than one link in the paragraph. Probably better to remove all html link code rather than using capture groups.
-            let re3 = Regex::new(r#"(?P<thestart>.*?)<a href=.*?>(?P<ignorelink>.*?)</a>(?P<therest>.*?)"#).unwrap();
-            let n = re3.captures(&cap["line"]);
-
-            // this looks for the social media nonsense in the line, seems to be working most of the time.
-            let re4 = Regex::new(r#"<a href="https://twitter.com/[bbc|BBC].+"#).unwrap();
-            let p = re4.is_match(&cap["line"]);
-            
-
-            // if not social media nonsense
-            if !p {
-
-            if let Some(value) = m {
-                let bit = format!("* {} *\n\n",&value["boldline"]);
-                full_story.push_str(&bit);
-            } else if let Some(value) = n {
-                let bit = format!("{}{}{}\n\n",&value["thestart"],&value["ignorelink"],&value["therest"]);
-                full_story.push_str(&bit);
-            } else {
-                let bit = format!("{}\n\n",&cap["line"]);
-                full_story.push_str(&bit);
-            }
-
-        }
-    }
-
-    format!("{} ----- \n (END OF ARTICLE, press any key to return) \n",decode_html(&full_story))
-    
-    }
-}
-
-// BBC news mainly only uses apostrophes so we just need to decode these
-pub fn decode_html(input: &str) -> String {
-    let give_back = input.replace("&#x27;", "'");
-    give_back.replace("&quot;", "\"")
-
-
     
 }
-
 
 pub fn get_user_input() -> usize {
     let mut input = String::new();
 
-
-    io::stdin().read_line(&mut input).expect("Keyboard bad");
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Keyboard input bad.");
 
     match input.trim().parse::<usize>() {
         Ok(val) if val < 11 && val > 0 => val,
-        _ => {println!("Goodbye"); std::process::abort();},
+        _ => {
+            println!("~~ Goodbye ~~");
+            std::process::abort();
+        }
     }
+}
+
+// This function waits for any user input.
+fn get_any_user_input() {
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Keyboard input bad.");
 }
