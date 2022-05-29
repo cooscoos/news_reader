@@ -44,51 +44,63 @@ impl Article {
                 }
             };
     
-            let re = Regex::new(r#"<div data-component="text-block" class="ssrcss-uf6wea-RichTextComponentWrapper e1xue1i86"><div class="ssrcss-7uxr49-RichTextContainer e5tfeyi1"><p class="ssrcss-1q0x1qg-Paragraph eq5iqo00">(?P<line>.*?)</p>"#).unwrap();
-            let mut full_story = format!("\n-----\n{}\n-----\n\n",self.summary.to_ascii_uppercase());
-    
-            for cap in re.captures_iter(&full_article) {
-                
-                let re2 = Regex::new(r#"l-BoldText e5tfeyi3">(?P<boldline>.*?)</b>"#).unwrap();
-                let m = re2.captures(&cap["line"]);
-    
-                // this isn't always working is it because my thingy is lazy?
-                let re3 = Regex::new(r#".*?<a href=.*?>(?P<ignorelink>.*?)</a>(?P<therest>.+)"#).unwrap();
-                let n = re3.captures(&cap["line"]);
-
-                // this looks for the social media nonsense in the line
-                let re4 = Regex::new(r#"<i class="ssrcss-xbdn93-ItalicText e5tfeyi2">.+"#).unwrap();
-                let p = re4.is_match(&cap["line"]);
-                
-
-                // if not social media nonsense
-                if !p {
-
-                if let Some(value) = m {
-                    let bit = format!("* {} *\n\n",&value["boldline"]);
-                    full_story.push_str(&bit);
-                } else if let Some(value) = n {
-                    let bit = format!("{}{}\n\n",&value["ignorelink"],&value["therest"]);
-                    full_story.push_str(&bit);
-                } else {
-                    let bit = format!("{}\n\n",&cap["line"]);
-                    full_story.push_str(&bit);
-                }
-    
-            }
-        }
+            
+            self.full_article = self.parse_article(full_article);
             self.been_read = true;
     
-            self.full_article = format!("{} ----- \n (END OF ARTICLE, press any key to return) \n",decode_html(&full_story));
-    
+
             
-        } else {
-            println!("I doing from memory because I clever")
         }
 
         self.full_article.clone()
 
         
+    }
+
+    fn parse_article(&self, full_article: String) -> String{
+
+        // we probably want to collect about 5 lines each time and output a vector string to have the read thingy
+        let mut full_story = format!("\n-----\n{}\n-----\n\n",self.summary.to_ascii_uppercase());
+
+        if self.href.contains("/sport/") {
+            // TODO: I could code up some stuff to parse BBC Sport articles but I can't be bothered doing this.
+            full_story.push_str("Sorry, BBC Sport articles are not supported by this app.\n\n")
+        }
+        let re = Regex::new(r#"<div data-component="text-block" class="ssrcss-uf6wea-RichTextComponentWrapper e1xue1i86"><div class="ssrcss-7uxr49-RichTextContainer e5tfeyi1"><p class="ssrcss-1q0x1qg-Paragraph eq5iqo00">(?P<line>.*?)</p>"#).unwrap();
+
+        for cap in re.captures_iter(&full_article) {
+            
+            let re2 = Regex::new(r#"l-BoldText e5tfeyi3">(?P<boldline>.*?)</b>"#).unwrap();
+            let m = re2.captures(&cap["line"]);
+
+            // TODO: this will die if there is any more than one link in the paragraph. Probably better to remove all html link code rather than using capture groups.
+            let re3 = Regex::new(r#"(?P<thestart>.*?)<a href=.*?>(?P<ignorelink>.*?)</a>(?P<therest>.*?)"#).unwrap();
+            let n = re3.captures(&cap["line"]);
+
+            // this looks for the social media nonsense in the line, seems to be working most of the time.
+            let re4 = Regex::new(r#"<a href="https://twitter.com/[bbc|BBC].+"#).unwrap();
+            let p = re4.is_match(&cap["line"]);
+            
+
+            // if not social media nonsense
+            if !p {
+
+            if let Some(value) = m {
+                let bit = format!("* {} *\n\n",&value["boldline"]);
+                full_story.push_str(&bit);
+            } else if let Some(value) = n {
+                let bit = format!("{}{}{}\n\n",&value["thestart"],&value["ignorelink"],&value["therest"]);
+                full_story.push_str(&bit);
+            } else {
+                let bit = format!("{}\n\n",&cap["line"]);
+                full_story.push_str(&bit);
+            }
+
+        }
+    }
+
+    format!("{} ----- \n (END OF ARTICLE, press any key to return) \n",decode_html(&full_story))
+    
     }
 }
 
