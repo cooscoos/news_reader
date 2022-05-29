@@ -17,7 +17,7 @@ async fn main() {
     };
  
     // Use regex to extract the most read article rating (number), the link, and the summary
-    let re = Regex::new(r#"most-popular-read-(?P<number>\d{1,2}).*?href="/news/(?P<link>.*?)">.*?gel-pica-bold">(?P<summary>.*?)</span>"#).unwrap();
+    let re = Regex::new(r#"most-popular-read-(?P<number>\d{1,2}).*?href="(?P<link>.*?)">.*?gel-pica-bold">(?P<summary>.*?)</span>"#).unwrap();
 
     let mut stories: Vec<Article> = Vec::new();
 
@@ -43,16 +43,14 @@ async fn main() {
 
         println!("{}",stories[input_no-1].read());
 
+        // sport articles have a completely different format that you need to regex through
+
         // I just want a keypress here, probably a better way
         let mut input = String::new();
         io::stdin().read_line(&mut input).expect("Keyboard bad");
     }
 
-    //let re = Regex::new(r#"l-BoldText e5tfeyi3">(.*?)<.*?Paragraph eq5iqo00">(.*?)</p>.*?Paragraph eq5iqo00">(.*?)</p>.*?Paragraph eq5iqo00">(.*?)</p>.*?Paragraph eq5iqo00">(.*?)</p>.*?Paragraph eq5iqo00">(.*?)</p>"#).unwrap();
-
-
-
-    // show 5 lines at a time with enter to read more -- learn keypress first.
+    // show 5 lines at a time with enter to read more -- learn keypress first. - maybe can do for selection too
     
     // grey out if been_read
 

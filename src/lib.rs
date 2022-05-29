@@ -25,17 +25,17 @@ impl Article {
 
     pub fn display_them(&self) {
         let read = match self.been_read{
-            true => "(READ)",
+            true => "(READ) ",
             false => "", 
         };
 
-        println!("{}. {} {}", self.number, self.summary, read)
+        println!("{:<2}  {:<80}{}", self.number, self.summary, read);
     }
 
     pub fn read(&mut self) -> String {
         
         if !self.been_read {
-            let story_url = format!("http://www.bbc.co.uk/news/{}",self.href);
+            let story_url = format!("https://www.bbc.co.uk{}",self.href);
 
             let full_article = match reqwest::get(&story_url) {
                 Ok(mut val) => val.text().unwrap(),
@@ -56,14 +56,13 @@ impl Article {
                 let re3 = Regex::new(r#".*?<a href=.*?>(?P<ignorelink>.*?)</a>(?P<therest>.+)"#).unwrap();
                 let n = re3.captures(&cap["line"]);
 
-                let re4 = Regex::new(r#"Facebook<i class="ssrcss-xbdn93-ItalicText e5tfeyi2">.+"#).unwrap();
+                // this looks for the social media nonsense in the line
+                let re4 = Regex::new(r#"<i class="ssrcss-xbdn93-ItalicText e5tfeyi2">.+"#).unwrap();
                 let p = re4.is_match(&cap["line"]);
-    
+                
 
-                // need to deal with this facebook crap
-                // https://www.bbc.co.uk/news/uk-england-nottinghamshire-61581128
-
-                //let p = true;
+                // if not social media nonsense
+                if !p {
 
                 if let Some(value) = m {
                     let bit = format!("* {} *\n\n",&value["boldline"]);
@@ -71,12 +70,13 @@ impl Article {
                 } else if let Some(value) = n {
                     let bit = format!("{}{}\n\n",&value["ignorelink"],&value["therest"]);
                     full_story.push_str(&bit);
-                } else if !p {
+                } else {
                     let bit = format!("{}\n\n",&cap["line"]);
                     full_story.push_str(&bit);
                 }
     
             }
+        }
             self.been_read = true;
     
             self.full_article = format!("{} ----- \n (END OF ARTICLE, press any key to return) \n",decode_html(&full_story));
