@@ -18,7 +18,7 @@ impl Article {
             number: num,
             href: href.to_string(),
             summary: Article::decode_html(summary),
-            full_article: "".to_string(), // empty for now, we're only going to grab it if the user wants to read it
+            full_article: "".to_string(), // Full article text empty for now, we're only going to grab it if the user wants to read it
             been_read: false,
         }
     }
@@ -67,22 +67,12 @@ impl Article {
         let re = Regex::new(r#"<div data-component="text-block" class="ssrcss-uf6wea-RichTextComponentWrapper e1xue1i86"><div class="ssrcss-7uxr49-RichTextContainer e5tfeyi1"><p class="ssrcss-1q0x1qg-Paragraph eq5iqo00">(?P<line>.*?)</p>"#).unwrap();
 
         for (line_no, cap) in re.captures_iter(&full_article).enumerate() {
-            // This looks for paragraphs with social media nonsense so we can ignore them.
-            let re4 = Regex::new(r#"<a href="https://twitter.com/[bbc|BBC].+"#).unwrap();
-            let social_media = re4.is_match(&cap["line"]);
+            let para = Article::remove_social_media(&cap["line"]); // remove paragraphs with social media
+            let clean_para = Article::remove_formatting(&para); // get rid of bold and href formatting
 
-            let mut para = String::new();
+            full_story.push_str(&clean_para);
 
-            if !social_media {
-                para = format!("{}\n\n", &cap["line"]);
-            }
-
-            // get rid of bold and href formatting
-            let para2 = Article::remove_formatting(para);
-
-            full_story.push_str(&para2);
-
-            // Every 6 lines, insert some message. These will be interpreted by the main loop and used to break the article up a bit
+            // Every 6 lines, insert a flag --- main news loop will use these to break the article up a bit when printing it to terminal
             if line_no > 0 && line_no % 6 == 0 {
                 full_story.push_str("\n[SEPARATE]\n");
             }
@@ -94,8 +84,21 @@ impl Article {
         )
     }
 
+    // This looks for paragraphs with social media nonsense so we can ignore them.
+    fn remove_social_media(input: &str) -> String {
+        let re4 = Regex::new(r#"<a href="https://twitter.com/[bbc|BBC].+"#).unwrap();
+        let social_media = re4.is_match(input);
+
+        let mut para = String::new();
+
+        if !social_media {
+            para = format!("{}\n\n", input);
+        }
+        para
+    }
+
     // Remove href and bold html formatting
-    fn remove_formatting(input: String) -> String {
+    fn remove_formatting(input: &str) -> String {
         // Look for hyperlinks
         let re5 = Regex::new(r#"<a href=".*?" class=".*?">(?P<thewords>.*?)</a>"#).unwrap();
 
@@ -108,7 +111,7 @@ impl Article {
         output2.to_string()
     }
 
-    // Decode some html. BBC mainly uses apostrophes and quotes so we only need to decode these.
+    // Decode some html characters. BBC mainly uses apostrophes and quotes so we only need to decode these.
     fn decode_html(input: &str) -> String {
         let give_back = input.replace("&#x27;", "'");
         give_back.replace("&quot;", "\"")

@@ -67,7 +67,7 @@ pub fn get_user_input() -> usize {
         Ok(val) if val < 11 && val > 0 => val,
         _ => {
             println!("~~ Goodbye ~~");
-            std::process::abort();
+            std::process::abort();  // is this a good way to quit out of async loops?
         }
     }
 }
