@@ -12,7 +12,7 @@ This is a hobby project; I don't work for the BBC.
 
 ## How do I use this?
 
-Download the repo, then follow instructions for your OS.
+Download the repo, then compile in Rust, or follow instructions below for your OS.
 
 ### Linux
 * In terminal, navigate to `/run
@@ -22,7 +22,3 @@ Download the repo, then follow instructions for your OS.
 
 * In your terminal, navigate to `\run`
 * Run`.\news_reader
-
-### MacOS:
-
-¯\\_(ツ)_/¯
