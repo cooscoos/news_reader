@@ -47,14 +47,13 @@ pub fn news_loop(top_stories: &mut Vec<Article>) {
 
     let input_no = get_user_input();
 
-    let selected_story = top_stories[input_no - 1].read();
+    let selected_story = top_stories[input_no - 1].print_full();
     let story_chunks: Vec<&str> = selected_story.split("[SEPARATE]").collect();
 
     for chunk in story_chunks {
         println!("{}[Press any key to continue]", chunk);
         get_any_user_input()
     }
-    
 }
 
 pub fn get_user_input() -> usize {
