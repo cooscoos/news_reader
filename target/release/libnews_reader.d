@@ -1,1 +1,0 @@
-/home/coosy/Documents/RustProjects/news_reader/target/release/libnews_reader.rlib: /home/coosy/Documents/RustProjects/news_reader/src/article.rs /home/coosy/Documents/RustProjects/news_reader/src/lib.rs
