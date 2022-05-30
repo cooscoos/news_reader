@@ -15,12 +15,12 @@ This is a hobby project; I don't work for the BBC.
 Download the repo, then follow instructions for your OS.
 
 ### Linux
-* In terminal, navigate to `/target/release
+* In terminal, navigate to `/run
 * run `./news_reader
 
 ### Windows
 
-* In your terminal, navigate to `\target\x86_64-pc-windows-gnu\release`
+* In your terminal, navigate to `\run`
 * Run`.\news_reader
 
 ### MacOS:
