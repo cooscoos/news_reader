@@ -1,0 +1,12 @@
+/app/target/x86_64-pc-windows-gnu/release/deps/libc-04fb14da1b1d1c56.rmeta: /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/lib.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/macros.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/fixed_width_ints.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/mod.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/gnu/mod.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/gnu/align.rs
+
+/app/target/x86_64-pc-windows-gnu/release/deps/liblibc-04fb14da1b1d1c56.rlib: /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/lib.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/macros.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/fixed_width_ints.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/mod.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/gnu/mod.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/gnu/align.rs
+
+/app/target/x86_64-pc-windows-gnu/release/deps/libc-04fb14da1b1d1c56.d: /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/lib.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/macros.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/fixed_width_ints.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/mod.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/gnu/mod.rs /usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/gnu/align.rs
+
+/usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/lib.rs:
+/usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/macros.rs:
+/usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/fixed_width_ints.rs:
+/usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/mod.rs:
+/usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/gnu/mod.rs:
+/usr/local/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.126/src/windows/gnu/align.rs:
