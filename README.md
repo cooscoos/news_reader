@@ -1,12 +1,12 @@
 # BBC News CLI
 
-Picture this scene. You're working in a terminal. You don't want to leave. Suddenly, you're struck with the burning desire to access the most read stories on the BBC News.
+You're working in a terminal, and you don't want to leave, but you desparately want to access the Most Read stories on BBC News.
 
-Sound familiar to you?
+Sound familiar?
 
 Yeah, no, me neither, but here's a CLI app that'll do just that, coded in Rust.
 
-I don't work for the BBC; this is a hobby project.
+This is a hobby project; I don't work for the BBC.
 
 ![snapshot of the app](/snapshot.png "snapshot of the app")
 
