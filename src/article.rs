@@ -102,7 +102,7 @@ impl Article {
         // and bold formatting
         let re6 = Regex::new(r#"<b class=".*?">(?P<thewords>.*?)</b>"#).unwrap();
 
-        let output1 = re5.replace(&input, "$thewords"); // get rid href
+        let output1 = re5.replace_all(&input, "$thewords"); // get rid href
         let output2 = re6.replace_all(&output1, "$thewords"); // get rid bold
 
         output2.to_string()
